@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #243b55;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+        button {
+            background: #243b55;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        li {
+            background: white;
+            padding: 12px;
+            margin: 8px 0;
+            list-style: none;
+            border-radius: 5px;
+        }
+        .delete {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <a href="index.html">Home</a>
+
+    <h2>Add a Book</h2>
+    <input type="text" id="title" placeholder="Book Title">
+    <input type="text" id="author" placeholder="Author Name">
+    <button onclick="addBook()">Add Book</button>
+
+    <h2>Available Books</h2>
+    <ul id="bookList"></ul>
+
+    <script>
+        function getBooks() {
+            return JSON.parse(
+                localStorage.getItem("books") || "[]"
+            );
+        }
+
+        function saveBooks(books) {
+            localStorage.setItem("books", JSON.stringify(books));
+        }
+
+        function addBook() {
+            const title = document.getElementById("title").value.trim();
+            const author = document.getElementById("author").value.trim();
+
+            if (!title || !author) {
+                alert("Please enter the book title and author.");
+                return;
+            }
+
+            const books = getBooks();
+            books.push({
+                id: Date.now(),
+                title: title,
+                author: author
+            });
+
+            saveBooks(books);
+            document.getElementById("title").value = "";
+            document.getElementById("author").value = "";
+            displayBooks();
+        }
+
+        function deleteBook(id) {
+            const books = getBooks().filter(book => book.id !== id);
+            saveBooks(books);
+            displayBooks();
+        }
+
+        function displayBooks() {
+            const list = document.getElementById("bookList");
+            list.innerHTML = "";
+
+            getBooks().forEach(book => {
+                const li = document.createElement("li");
+                li.append(
+                    document.createTextNode(
+                        book.title + " by " + book.author + " "
+                    )
+                );
+
+                const btn = document.createElement("button");
+                btn.textContent = "Delete";
+                btn.className = "delete";
+                btn.onclick = () => deleteBook(book.id);
+
+                li.appendChild(btn);
+                list.appendChild(li);
+            });
+        }
+
+        displayBooks();
+    </script>
+</body>
+</html>

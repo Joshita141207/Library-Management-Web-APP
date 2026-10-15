@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #243b55;
+        }
+        input {
+            padding: 12px;
+            width: 280px;
+            max-width: 90%;
+        }
+        li {
+            list-style: none;
+            background: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        a {
+            color: #243b55;
+        }
+    </style>
+</head>
+<body>
+    <h1>User Portal</h1>
+    <p><a href="index.html">Back to Home</a></p>
+
+    <h2>Available Books</h2>
+    <input
+        type="text"
+        id="search"
+        placeholder="Search by title or author"
+        oninput="displayBooks()"
+    >
+
+    <ul id="bookList"></ul>
+
+    <script>
+        function displayBooks() {
+            const books = JSON.parse(
+                localStorage.getItem("books") || "[]"
+            );
+
+            const search = document.getElementById("search")
+                .value.toLowerCase().trim();
+
+            const list = document.getElementById("bookList");
+            list.innerHTML = "";
+
+            const filteredBooks = books.filter(book =>
+                book.title.toLowerCase().includes(search) ||
+                book.author.toLowerCase().includes(search)
+            );
+
+            if (filteredBooks.length === 0) {
+                list.textContent = "No books found.";
+                return;
+            }
+
+            filteredBooks.forEach(book => {
+                const li = document.createElement("li");
+                li.textContent =
+                    book.title + " — Author: " + book.author;
+                list.appendChild(li);
+            });
+        }
+
+        displayBooks();
+    </script>
+</body>
+</html>
